@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head><meta charset="UTF-8"><title>生成圖示</title>
+<style>
+  body { font-family: -apple-system, sans-serif; padding: 30px; background: #f3f4f6; }
+  h2 { margin-bottom: 16px; }
+  canvas { display: none; }
+  .btn { background: #1d4ed8; color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 15px; cursor: pointer; margin: 6px; }
+  p { color: #4b5563; font-size: 14px; margin-bottom: 16px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<h2>桃園公車 — 圖示生成器</h2>
+<p>點擊下方按鈕，下載圖示後放入 <code>icons/</code> 資料夾中。<br>
+共需下載三個圖示：icon-180.png、icon-192.png、icon-512.png</p>
+<button class="btn" onclick="download(180)">下載 icon-180.png（iOS 主畫面）</button><br>
+<button class="btn" onclick="download(192)">下載 icon-192.png（Android/PWA）</button><br>
+<button class="btn" onclick="download(512)">下載 icon-512.png（PWA 啟動畫面）</button>
+<canvas id="c"></canvas>
+
+<script>
+function drawIcon(size) {
+  const c = document.getElementById('c');
+  c.width = c.height = size;
+  const ctx = c.getContext('2d');
+
+  // Background
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#1d4ed8');
+  grad.addColorStop(1, '#1e40af');
+  ctx.fillStyle = grad;
+  const r = size * 0.2;
+  ctx.beginPath();
+  ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size);
+  ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r);
+  ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+  ctx.fill();
+
+  // Bus emoji scaled
+  ctx.font = `${size * 0.52}px serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚌', size / 2, size / 2 - size * 0.04);
+
+  // "桃園" text
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.font = `bold ${size * 0.14}px -apple-system, sans-serif`;
+  ctx.fillText('桃園公車', size / 2, size * 0.82);
+}
+
+function download(size) {
+  drawIcon(size);
+  const c = document.getElementById('c');
+  const a = document.createElement('a');
+  a.download = `icon-${size}.png`;
+  a.href = c.toDataURL('image/png');
+  a.click();
+}
+</script>
+</body>
+</html>
